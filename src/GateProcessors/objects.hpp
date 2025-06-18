@@ -20,10 +20,10 @@ struct Obj {
   // of the  object would be relative to the origin
   std::vector<float> shape;
   
-  // var the state of each nodes
+  // var that holds the interface aka port node
   std::vector<bool> interface_node;
 
-  // var that holds what the object can do
+  // var that holds the current state of each components inside
   std::vector<bool> state;
 
   // holds the array of connected nodes
