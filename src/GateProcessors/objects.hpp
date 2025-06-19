@@ -1,51 +1,83 @@
 #pragma once
 
-#include <vector>
+// Just for uint8_t
+#include <cstdint>
 
-// the Object that can hold internal state and have internal process
-// used on both IC and logic gates
-struct Obj {
+struct Gate {
+    // Gate type (0 = and, 1 = or, 2 = xor, 3 = nand, 4 = nor, 5 = xnor)
+    const uint8_t type;
 
-  // what kind of Object is it
-  // either logic gate, device
-  // or ic
-  int type;
-  
-  // origin x
-  float posx;
-  // origin y
-  float posy;
+    // Position
+    float x;
+    float y;
 
-  // var that holds the vector on what the shape
-  // of the  object would be relative to the origin
-  std::vector<float> shape;
-  
-  // var that holds the interface aka port node
-  std::vector<bool> interface_node;
+    // Pointers to the input networks
+    // Could be other types too if more states are needed
+    bool* inputNodeA;
+    bool* inputNodeB;
 
-  // var that holds the current state of each components inside
-  std::vector<bool> state;
+    // Pointer to the output network
+    bool* outputNode;
 
-  // holds the array of connected nodes
-  std::vector<std::vector<int>> internal_nodes;
-  
-  // function that change the state of its interface nodes
-  // and perform a execution step on the logic inside
-  virtual std::vector<bool>& step(int step_size = 1) = 0;
+    // Constructor for the gate
+    Gate(uint8_t type_) : type(type_), inputNodeA(nullptr), inputNodeB(nullptr), outputNode(nullptr) {}
 
 
+    // functions to connect the gate's inputs and output to networks
+    void connectInputA(bool& network) {
+        inputNodeA = &network;
+    }
+
+    void connectInputB(bool& network) {
+        inputNodeB = &network;
+    }
+
+    void connectOutput(bool& network) {
+        outputNode = &network;
+    }
+
+
+    // Here's an example of how you'd normally update the gate
+    void step() {
+        // If the gate's output isn't connected, the gate can be skipped
+        if(!outputNode) {
+            return;
+        }
+
+        // Default states of the inputs can be false if the inputs aren't connected
+        bool a = false;
+        bool b = false;
+        if(inputNodeA) {
+            a = *inputNodeA;
+        }
+        if(inputNodeB) {
+            b = *inputNodeB;
+        }
+
+        switch (type) {
+            case 0: // And gate
+                *outputNode = a && b;
+                break;
+
+            case 1: // Or gate
+                *outputNode = a || b;
+                break;
+
+            case 2: // Not gate
+                *outputNode = a != b;
+                break;
+
+            case 3: // Nand gate
+                *outputNode = !(a && b);
+                break;
+
+            case 4: // Nor gate
+                *outputNode = !(a || b);
+                break;
+
+            case 5: // Xnor gate
+                *outputNode = a == b;
+                break;
+        }
+    }
 };
-
-
-struct Gate : public Obj {
-  std::vector<bool>& step(int step_size); 
-};
-
-struct Circuit : public Obj {
-  std::vector<bool>& step(int step_size);
-};
-
-namespace type_holder {
-std::vector<Obj> type;
-}
-
