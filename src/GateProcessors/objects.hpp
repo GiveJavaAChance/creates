@@ -63,7 +63,7 @@ struct Gate {
                 *outputNode = a || b;
                 break;
 
-            case 2: // Not gate
+            case 2: // Xor gate
                 *outputNode = a != b;
                 break;
 
