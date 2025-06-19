@@ -2,7 +2,7 @@
 #include "Gate.h"
 #include "TruthTable.h"
 
-Circuit::Circuit() : table(nullptr) {
+Circuit::Circuit() : table(nullptr), hasUpdated(false) {
 }
 
 Circuit::~Circuit() {
@@ -34,11 +34,23 @@ bool* Circuit::addOutput() {
     return out;
 }
 
-void Circuit::step() {
+void Circuit::evaluate() {
+    if(hasUpdated) {
+        return;
+    }
+    hasUpdated = true;
+    if(table) {
+        table->evaluate(inputs, outputs);
+        return;
+    }
     for(Gate* gate : gates) {
         gate->evaluate();
     }
     for(Gate* gate : gates) {
         gate->reset();
     }
+}
+
+void Circuit::reset() {
+    hasUpdated = false;
 }

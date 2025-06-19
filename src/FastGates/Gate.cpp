@@ -1,7 +1,7 @@
 #include "Gate.h"
 #include "Node.h"
 
-Gate::Gate(uint8_t type_) : type(type_) {}
+Gate::Gate(GateType type_) : type(type_) {}
 
 void Gate::connectInputA(Node& node) {
     inputA = &node;
@@ -12,22 +12,22 @@ void Gate::connectInputB(Node& node) {
 }
 
 bool Gate::evaluate() {
-    if (hasUpdated) return state;
+    if (hasUpdated) {
+        return state;
+    }
     hasUpdated = true;
 
     bool a = inputA ? inputA->evaluate() : false;
     bool b = inputB ? inputB->evaluate() : false;
 
     switch (type) {
-        case 0: state = a && b; break;
-        case 1: state = a || b; break;
-        case 2: state = a != b; break;
-        case 3: state = !(a && b); break;
-        case 4: state = !(a || b); break;
-        case 5: state = a == b; break;
-        default: state = false; break;
+        case AND: state = a && b; break;
+        case OR:  state = a || b; break;
+        case XOR: state = a != b; break;
+        case NAND: state = !(a && b); break;
+        case NOR:  state = !(a || b); break;
+        case XNOR: state = a == b; break;
     }
-
     return state;
 }
 

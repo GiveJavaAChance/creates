@@ -16,6 +16,8 @@ private:
 
     std::vector<Gate*> gates;
 
+    bool hasUpdated;
+
     friend TruthTable;
 public:
 
@@ -26,7 +28,8 @@ public:
     void addGate(Gate& gate);
     bool* addInput();
     bool* addOutput();
-    void step();
+    void evaluate();
+    void reset();
 };
 
 #endif

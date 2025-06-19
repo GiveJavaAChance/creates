@@ -9,10 +9,10 @@ struct Circuit;
 
 struct TruthTable {
 private:
-    uint32_t* outputStates;
     const uint32_t numStates;
     const uint32_t numInputs;
     const uint32_t numOutputs;
+    uint32_t* outputStates;
 
 public:
     TruthTable(Circuit& ic);

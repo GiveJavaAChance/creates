@@ -4,7 +4,7 @@
 #include "Node.h"
 
 int main() {
-    Gate gate(0);
+    Gate gate(AND);
 
     bool pa = false;
     Node inA(pa);

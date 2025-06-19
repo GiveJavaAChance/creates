@@ -1,7 +1,7 @@
 #include "TruthTable.h"
 #include "Circuit.h"
 
-TruthTable::TruthTable(Circuit& ic) : numInputs(ic.inputs.size()), numOutputs(ic.outputs.size()), numStates(1 << ic.inputs.size()) {
+TruthTable::TruthTable(Circuit& ic) : numStates(1 << ic.inputs.size()), numInputs(ic.inputs.size()), numOutputs(ic.outputs.size()) {
     uint32_t totalBits = numStates * numOutputs;
     uint32_t numWords = (totalBits + 31) >> 5;
     outputStates = new uint32_t[numWords];
@@ -10,7 +10,8 @@ TruthTable::TruthTable(Circuit& ic) : numInputs(ic.inputs.size()), numOutputs(ic
         for (uint32_t j = 0; j < numInputs; j++) {
             *ic.inputs[j] = (i >> j) & 1;
         }
-        ic.step();
+        ic.evaluate();
+        ic.reset();
 
         for (uint32_t j = 0; j < numOutputs; j++) {
             bool bit = *ic.outputs[j];
@@ -24,7 +25,7 @@ TruthTable::TruthTable(Circuit& ic) : numInputs(ic.inputs.size()), numOutputs(ic
     }
 }
 
-inline void TruthTable::evaluate(const std::vector<bool*>& inputs, std::vector<bool*>& outputs) const {
+void TruthTable::evaluate(const std::vector<bool*>& inputs, std::vector<bool*>& outputs) const {
     uint32_t inputIndex = 0;
     for (uint32_t i = 0; i < numInputs; i++) {
         if (*inputs[i]) {

@@ -7,17 +7,26 @@
 
 struct Node;
 
+enum GateType : uint8_t {
+    AND = 0,
+    OR,
+    XOR,
+    NAND,
+    NOR,
+    XNOR
+};
+
 struct Gate {
 private:
     Node* inputA;
     Node* inputB;
 
-    uint8_t type;
+    GateType type;
     bool state = false;
     bool hasUpdated = false;
 
 public:
-    Gate(uint8_t type_);
+    Gate(GateType type_);
 
     void connectInputA(Node& node);
     void connectInputB(Node& node);
